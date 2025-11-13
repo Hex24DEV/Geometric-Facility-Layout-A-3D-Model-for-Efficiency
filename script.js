@@ -55,7 +55,16 @@ window.addEventListener('resize', () => {
   camera.aspect = container.clientWidth / container.clientHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(container.clientWidth, container.clientHeight);
-  
+  // === Back to Top Button ===
+const backToTop = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 400) backToTop.classList.remove('hidden');
+  else backToTop.classList.add('hidden');
+});
+backToTop.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
   // === Smooth Scrolling for Navbar ===
 document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
