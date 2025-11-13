@@ -1,0 +1,24 @@
+/* Custom styles for Geometric Flow Factory Viz */
+
+body {
+  scroll-behavior: smooth;
+}
+
+h1, h2, h3 {
+  letter-spacing: 0.5px;
+}
+
+#canvas-container {
+  border-radius: 0.75rem;
+  background: #f8fafc;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+section {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+section:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
