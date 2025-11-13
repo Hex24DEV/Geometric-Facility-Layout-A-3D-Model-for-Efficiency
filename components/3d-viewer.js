@@ -1,3 +1,4 @@
+// components/3d-viewer.js
 class ThreeDViewer extends HTMLElement {
   constructor() {
     super();
@@ -9,20 +10,21 @@ class ThreeDViewer extends HTMLElement {
       <style>
         #canvas-container {
           width: 100%;
-          height: 500px;
-          background: #1a202c;
+          height: 100%;
           border-radius: 12px;
           overflow: hidden;
+          background: #1a202c;
         }
       </style>
       <div id="canvas-container"></div>
     `;
-
     this.initScene();
   }
 
   initScene() {
-    const container = this.shadowRoot.querySelector('#canvas-container');
+    const container = this.shadowRoot.getElementById('canvas-container');
+
+    // Scene & Camera
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x1a202c);
 
@@ -34,21 +36,23 @@ class ThreeDViewer extends HTMLElement {
     );
     camera.position.set(5, 5, 5);
 
+    // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild(renderer.domElement);
 
+    // Controls
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
 
-    // Lighting
+    // Lights
     const ambientLight = new THREE.AmbientLight(0x404040);
     scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(1, 3, 2);
-    scene.add(directionalLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight.position.set(3, 5, 2);
+    scene.add(dirLight);
 
-    // === CREATE YOUR FACILITY BELOW ===
+    // Materials
     const materials = {
       machine: new THREE.MeshStandardMaterial({ color: 0x4f46e5 }),
       storage: new THREE.MeshStandardMaterial({ color: 0x22c55e }),
@@ -63,31 +67,19 @@ class ThreeDViewer extends HTMLElement {
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
 
-    // Machines (x, y, z positions)
-    const machine1 = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), materials.machine);
-    machine1.position.set(-3, 0.5, 2);
-    scene.add(machine1);
+    // Example Factory Layout
+    const addBox = (x, y, z, sizeX, sizeY, sizeZ, mat) => {
+      const geometry = new THREE.BoxGeometry(sizeX, sizeY, sizeZ);
+      const mesh = new THREE.Mesh(geometry, mat);
+      mesh.position.set(x, y, z);
+      scene.add(mesh);
+    };
 
-    const machine2 = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1, 1.2), materials.machine);
-    machine2.position.set(3, 0.5, -1);
-    scene.add(machine2);
-
-    // Workstations
-    const station = new THREE.Mesh(new THREE.BoxGeometry(1, 0.7, 1), materials.workstation);
-    station.position.set(0, 0.35, 0);
-    scene.add(station);
-
-    // Storage
-    const storage = new THREE.Mesh(new THREE.BoxGeometry(2, 1, 1), materials.storage);
-    storage.position.set(-4, 0.5, -3);
-    scene.add(storage);
-
-    // Pathways (flat boxes)
-    const path = new THREE.Mesh(new THREE.BoxGeometry(10, 0.05, 1), materials.pathway);
-    path.position.set(0, 0.025, 0);
-    scene.add(path);
-
-    // === END OF FACILITY ===
+    addBox(-3, 0.5, 2, 1, 1, 1, materials.machine);      // Machine
+    addBox(3, 0.5, -1, 1.2, 1, 1.2, materials.machine); // Machine
+    addBox(0, 0.35, 0, 1, 0.7, 1, materials.workstation);// Workstation
+    addBox(-4, 0.5, -3, 2, 1, 1, materials.storage);    // Storage
+    addBox(0, 0.025, 0, 10, 0.05, 1, materials.pathway); // Pathway
 
     // Animate
     const animate = () => {
@@ -97,6 +89,7 @@ class ThreeDViewer extends HTMLElement {
     };
     animate();
 
+    // Handle Resize
     window.addEventListener('resize', () => {
       camera.aspect = container.clientWidth / container.clientHeight;
       camera.updateProjectionMatrix();
