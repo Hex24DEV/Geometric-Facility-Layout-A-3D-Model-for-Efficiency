@@ -55,6 +55,7 @@ window.addEventListener('resize', () => {
   camera.aspect = container.clientWidth / container.clientHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(container.clientWidth, container.clientHeight);
+  
   // === Back to Top Button ===
 const backToTop = document.getElementById('backToTop');
 window.addEventListener('scroll', () => {
